@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
-import HomeIcon from "@mui/icons-material/Home";
+import PeopleIcon from '@mui/icons-material/People';
+import Sidebar from '../Sidebar'
 import TitleGreen from "../../templates/Title/titleGreen";
-import ContentMenuGrid from "./ContainerGrid";
-import Sidebar from "../Sidebar";
+import EnhancedTable from '../../templates/Tables';
 
 function ContainerContent({ children, title, Icon }) {
   return (
@@ -22,15 +22,15 @@ function ContainerContent({ children, title, Icon }) {
 }
 
 
-export function ComponentHome() {
+export function ComponentUsers() {
   return (
     <>
       <ContainerContent
-        title={"Home"}
-        Icon={() => <HomeIcon sx={{ color: "#00e2ac" }} />}
+        title={"Clientes"}
+        Icon={() => <PeopleIcon sx={{ color: "#00e2ac" }} />}
       >
         <TitleGreen title={"Painel de Gerenciamento"} />
-        <ContentMenuGrid />
+        <EnhancedTable />
       </ContainerContent>
     </>
   );
