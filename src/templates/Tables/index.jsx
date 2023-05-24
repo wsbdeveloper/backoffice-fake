@@ -1,6 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
+import Collapse from '@mui/material/Collapse';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -11,19 +12,165 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';  
 import { visuallyHidden } from '@mui/utils';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
+/* 
+Objeto para a tabela:
+   name -> Nome do cliente
+   document -> CPF ou CNPJ
+   amount -> valor total
+   contract -> número do contrato
+   group -> número do grupo,
+   clientInformation:
+        * name: nome do cliente
+        * document: CPF ou CNPJ do cliente
+        * telephone: número do telefone
+        * locality: cidade e UF do cliente
+        * neighborhood: bairro do cliente
+        * cep: CEP do cliente
+    salesInformation:
+        * contract: número do contrato
+        * product: tipo do produto
+        * parcelValue: valor das parcelas
+        * creditValue: valor total
+        * payment: forma de pagamento
+        * dueDate: data de vencimento
+        * situation: situação da cotação
+*/
 function createData(name, document, amount, contract, group) {
-  return {
-    name,
-    document,
-    amount,
-    contract,
-    group,
-  };
+    return {
+        name,
+        document,
+        amount,
+        contract,
+        group,
+        clientInformation: [
+            {
+            name: name,
+            document: "635.789.512.25",
+            telephone: '(19) 91278-8965',
+            locality: 'Indaiatuba - SP',
+            neighborhood: 'Eldourado',
+            cep: '13343-801'
+            },
+        ],
+        salesInformation: [
+            {
+                contract: contract,
+                product: "Imóvel",
+                group: group,
+                creditValue: amount,
+                parcelValue: amount/10,
+                payment: "BOLETO",
+                dueDate: "20/04/2023",
+                situation: "CONCLUÍDA"
+            },
+        ]
+    };
 }
+
+function Row(props) {
+    const { row } = props;
+    const [open, setOpen] = React.useState(false);
+  
+    return (
+      <React.Fragment>
+        <TableRow sx={{'& > *': { borderBottom: 'unset' }}}>
+          <TableCell>
+            <IconButton
+                aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell component="th" scope="row">{row.name}</TableCell>
+          <TableCell align="right">{row.document}</TableCell>
+          <TableCell align="right">{row.amount}</TableCell>
+          <TableCell align="right">{row.contract}</TableCell>
+          <TableCell align="right">{row.group}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{ margin: 1 }}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Informações Pessoais
+                </Typography>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Nome</TableCell>
+                      <TableCell>CPF</TableCell>
+                      <TableCell>Telefone</TableCell>
+                      
+                      <TableCell>Cidade/UF</TableCell>
+                      <TableCell>Bairro</TableCell>
+                      <TableCell>CEP</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {row.clientInformation.map((historyRow) => (
+                      <TableRow key={historyRow.document}>
+                        <TableCell scope="row">{historyRow.name}</TableCell>
+                        <TableCell scope="row">{historyRow.document}</TableCell>
+                        <TableCell scope="row">{historyRow.telephone}</TableCell>
+                        <TableCell scope="row">{historyRow.locality}</TableCell>
+                        <TableCell scope="row">{historyRow.neighborhood}</TableCell>
+                        <TableCell scope="row">{historyRow.cep}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+              <Box sx={{ margin: 1 }}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Cotações
+                </Typography>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                        <TableCell>Contrato</TableCell>
+                        <TableCell>Produto</TableCell>
+                        <TableCell>Grupo</TableCell>
+                        <TableCell>Valor parcela</TableCell>
+                        <TableCell>Valor crédito</TableCell>
+                        <TableCell>Forma.pgto</TableCell>
+                        <TableCell>Data venc</TableCell>
+                        <TableCell>Situação</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {row.salesInformation.map((historyRow) => (
+                        <TableRow key={historyRow.contract}>
+                            <TableCell scope="row">{historyRow.contract}</TableCell>
+                            <TableCell scope="row">{historyRow.product}</TableCell>
+                            <TableCell scope="row">{historyRow.group}</TableCell>
+                            <TableCell scope="row">{historyRow.parcelValue}</TableCell>
+                            
+                            <TableCell scope="row">{historyRow.creditValue}</TableCell>
+                            <TableCell scope="row">{historyRow.payment}</TableCell>
+                            <TableCell scope="row">{historyRow.dueDate}</TableCell>
+                            <TableCell scope="row">{historyRow.situation}</TableCell>
+                        </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+}
+  
+  
 
 const rows = [
   createData('Luis Felipe Bueno', 78931789845, 50000, 45887, 48557),
@@ -67,6 +214,7 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
+  {},
   {
     id: 'name',
     numeric: false,
@@ -218,13 +366,13 @@ export default function EnhancedTable() {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2, backgroundColor: darkColorSecundary }}>
+      <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
-        <TableContainer>
+        <TableContainer >
           <Table
-            sx={{ minWidth: 750, backgroundColor: darkColorSecundary }}
+            sx={{ width: '100%',}}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size='small'
           >
             <EnhancedTableHead
               numSelected={selected.length}
@@ -236,30 +384,8 @@ export default function EnhancedTable() {
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const labelId = `enhanced-table-checkbox-${index}`;
-
                 return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.name)}
-                    tabIndex={-1}
-                    key={row.name}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="15px"
-                      sx={{backgroundColor: darkColorSecundary, color: whiteColor, height: 50}}
-                    >
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right" sx={{backgroundColor: darkColorSecundary, color: whiteColor}}>{row.document}</TableCell>
-                    <TableCell align="right" sx={{backgroundColor: darkColorSecundary, color: whiteColor}}>{row.amount}</TableCell>
-                    <TableCell align="right" sx={{backgroundColor: darkColorSecundary, color: whiteColor}}>{row.contract}</TableCell>
-                    <TableCell align="right" sx={{backgroundColor: darkColorSecundary, color: whiteColor}}>{row.group}</TableCell>
-                  </TableRow>
+                    <Row row={row} key={row.name} />
                 );
               })}
               {emptyRows > 0 && (
@@ -275,7 +401,7 @@ export default function EnhancedTable() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10]}
+          rowsPerPageOptions={[2,5,10]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
