@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
 import Collapse from '@mui/material/Collapse';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -18,6 +18,7 @@ import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import {DarkTheme} from '../../themes/mui';
 
 /* 
 Objeto para a tabela:
@@ -45,8 +46,6 @@ Objeto para a tabela:
 function createData(amount, propostNumber, clientObj, salesObj) {
     const name = clientObj.name;
     const document = clientObj.document;
-    console.log(salesObj)
-
     return {
         name,
         document,
@@ -256,34 +255,37 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{backgroundColor: darkColorSecundary}}>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding='15px'
-            sortDirection={orderBy === headCell.id ? order : false}  
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-              sx={{color: greenColor}}
+    <ThemeProvider theme={DarkTheme}>
+        <TableHead sx={{backgroundColor: darkColorSecundary}}>
+        <TableRow>
+            {headCells.map((headCell) => (
+            <TableCell
+                key={headCell.id}
+                align={headCell.numeric ? 'right' : 'left'}
+                padding='15px'
+                sortDirection={orderBy === headCell.id ? order : false}  
             >
-              {headCell.label}
-              {
-                orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </Box>
-                ) : null
-              }
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
+                <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+                sx={{color: greenColor}}
+                color='primary'
+                >
+                {headCell.label}
+                {
+                    orderBy === headCell.id ? (
+                    <Box component="span" sx={visuallyHidden}>
+                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    </Box>
+                    ) : null
+                }
+                </TableSortLabel>
+            </TableCell>
+            ))}
+        </TableRow>
+        </TableHead>
+    </ThemeProvider>
   );
 }
 
@@ -334,10 +336,6 @@ export default function EnhancedTable() {
     setOrderBy(property);
   };
 
-  const handleClick = (event, name) => {
-    console.log('clicou', name)
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -360,52 +358,54 @@ export default function EnhancedTable() {
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <TableContainer >
-          <Table
-            sx={{ width: '100%',}}
-            aria-labelledby="tableTitle"
-            size='small'
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              sx={{color: greenColor}}
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+    <ThemeProvider theme={DarkTheme}>
+        <Box sx={{ width: '100%' }}>
+        <Paper sx={{ width: '100%', mb: 2 }}>
+            <EnhancedTableToolbar numSelected={selected.length} />
+            <TableContainer >
+            <Table
+                sx={{ width: '100%',}}
+                aria-labelledby="tableTitle"
+                size='small'
+            >
+                <EnhancedTableHead
+                numSelected={selected.length}
+                sx={{color: greenColor}}
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+                />
+                <TableBody>
+                {visibleRows.map((row, index) => {
+                    return (
+                        <Row row={row} key={row.name} />
+                    );
+                })}
+                {emptyRows > 0 && (
+                    <TableRow
+                    style={{
+                        height: (dense ? 33 : 53) * emptyRows,
+                    }}
+                    >
+                    <TableCell colSpan={6} />
+                    </TableRow>
+                )}
+                </TableBody>
+            </Table>
+            </TableContainer>
+            <TablePagination
+            rowsPerPageOptions={[2,5,10]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            sx={{backgroundColor: darkColorSecundary, color: whiteColor}}
             />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                return (
-                    <Row row={row} key={row.name} />
-                );
-              })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[2,5,10]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{backgroundColor: darkColorSecundary, color: whiteColor}}
-        />
-      </Paper>
-    </Box>
+        </Paper>
+        </Box>
+    </ThemeProvider>
   );
 }
