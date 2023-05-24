@@ -24,7 +24,7 @@ Objeto para a tabela:
    name -> Nome do cliente
    document -> CPF ou CNPJ
    amount -> valor total
-   contract -> número do contrato
+   propostNumber -> número da proposta
    group -> número do grupo,
    clientInformation:
         * name: nome do cliente
@@ -42,35 +42,18 @@ Objeto para a tabela:
         * dueDate: data de vencimento
         * situation: situação da cotação
 */
-function createData(name, document, amount, contract, group) {
+function createData(amount, propostNumber, clientObj, salesObj) {
+    const name = clientObj.name;
+    const document = clientObj.document;
+    console.log(salesObj)
+
     return {
         name,
         document,
         amount,
-        contract,
-        group,
-        clientInformation: [
-            {
-            name: name,
-            document: "635.789.512.25",
-            telephone: '(19) 91278-8965',
-            locality: 'Indaiatuba - SP',
-            neighborhood: 'Eldourado',
-            cep: '13343-801'
-            },
-        ],
-        salesInformation: [
-            {
-                contract: contract,
-                product: "Imóvel",
-                group: group,
-                creditValue: amount,
-                parcelValue: amount/10,
-                payment: "BOLETO",
-                dueDate: "20/04/2023",
-                situation: "CONCLUÍDA"
-            },
-        ]
+        propostNumber,
+        clientInformation: clientObj,
+        salesInformation: salesObj,
     };
 }
 
@@ -93,8 +76,7 @@ function Row(props) {
           <TableCell component="th" scope="row">{row.name}</TableCell>
           <TableCell align="right">{row.document}</TableCell>
           <TableCell align="right">{row.amount}</TableCell>
-          <TableCell align="right">{row.contract}</TableCell>
-          <TableCell align="right">{row.group}</TableCell>
+          <TableCell align="right">{row.propostNumber}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -116,16 +98,14 @@ function Row(props) {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {row.clientInformation.map((historyRow) => (
-                      <TableRow key={historyRow.document}>
-                        <TableCell scope="row">{historyRow.name}</TableCell>
-                        <TableCell scope="row">{historyRow.document}</TableCell>
-                        <TableCell scope="row">{historyRow.telephone}</TableCell>
-                        <TableCell scope="row">{historyRow.locality}</TableCell>
-                        <TableCell scope="row">{historyRow.neighborhood}</TableCell>
-                        <TableCell scope="row">{historyRow.cep}</TableCell>
+                      <TableRow>
+                        <TableCell scope="row">{row.clientInformation.name}</TableCell>
+                        <TableCell scope="row">{row.clientInformation.document}</TableCell>
+                        <TableCell scope="row">{row.clientInformation.telephone}</TableCell>
+                        <TableCell scope="row">{row.clientInformation.locality}</TableCell>
+                        <TableCell scope="row">{row.clientInformation.neighborhood}</TableCell>
+                        <TableCell scope="row">{row.clientInformation.cep}</TableCell>
                       </TableRow>
-                    ))}
                   </TableBody>
                 </Table>
               </Box>
@@ -171,14 +151,35 @@ function Row(props) {
 }
   
   
+// Mock:
+const amount = 555555;
+const propostNumber = 5555555;
+const client = {
+    name: "Luis Felipe Bueno",
+    document: 52931247782,
+    telephone: '(19) 91278-8965',
+    locality: 'Indaiatuba - SP',
+    neighborhood: 'Eldourado',
+    cep: '13343-801'
+};
+const sales = [
+    {
+        contract: 5555555,
+        product: "Imóvel",
+        group: 455,
+        creditValue: amount,
+        parcelValue: amount/10,
+        payment: "BOLETO",
+        dueDate: "20/04/2023",
+        situation: "CONCLUÍDA"
+    },    
+]
+
 
 const rows = [
-  createData('Luis Felipe Bueno', 78931789845, 50000, 45887, 48557),
-  createData('Leandro Torres', 78931789475, 50000, 135228, 2566),
-  createData('Marcio Scotuzzi', 78931744845, 100000, 566693, 5699),
-  createData('Welligton Bezerra', 77881789845, 320000, 89789, 45885),
-  createData('Felipe Luis Silva', 78931789845, 48050, 4828, 47552),
-  createData('Mariana Rodrigues', 84221789845, 725000, 135788, 1235666),
+  createData(amount, propostNumber, client, sales),
+  createData(amount, propostNumber, client, sales),
+  createData(amount, propostNumber, client, sales),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -238,12 +239,6 @@ const headCells = [
     numeric: true,
     disablePadding: false,
     label: 'Contrato',
-  },
-  {
-    id: 'group',
-    numeric: true,
-    disablePadding: false,
-    label: 'Grupo',
   },
 ];
 
