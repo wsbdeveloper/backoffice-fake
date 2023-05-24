@@ -62,12 +62,13 @@ function Row(props) {
   
     return (
       <React.Fragment>
-        <TableRow sx={{'& > *': { borderBottom: 'unset' }}}>
+        <TableRow sx={{'& > *': { borderBottom: 'unset' }, backgroundColor: '#242424'}}>
           <TableCell>
             <IconButton
                 aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
+                size="small"
+                onClick={() => setOpen(!open)}
+                color='primary'
             >
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
@@ -80,7 +81,7 @@ function Row(props) {
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
+              <Box sx={{ margin: 1 }} >
                 <Typography variant="h6" gutterBottom component="div">
                   Informações Pessoais
                 </Typography>
@@ -266,11 +267,11 @@ function EnhancedTableHead(props) {
                 sortDirection={orderBy === headCell.id ? order : false}  
             >
                 <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)}
-                sx={{color: greenColor}}
-                color='primary'
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : 'asc'}
+                    onClick={createSortHandler(headCell.id)}
+                    sx={{color: greenColor}}
+                    color='primary'
                 >
                 {headCell.label}
                 {
@@ -359,7 +360,7 @@ export default function EnhancedTable() {
 
   return (
     <ThemeProvider theme={DarkTheme}>
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%' }} border={0}>
         <Paper sx={{ width: '100%', mb: 2 }}>
             <EnhancedTableToolbar numSelected={selected.length} />
             <TableContainer >
