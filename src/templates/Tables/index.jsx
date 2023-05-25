@@ -20,6 +20,13 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {DarkTheme} from '../../themes/mui';
 
+import { maskCpf } from '../../config/regex';
+
+
+function maskMoney(value){
+  return (Intl.NumberFormat('pt-br', {style: 'currency', currency: 'BRL'}).format(value)).replace("R$","")
+}
+
 /* 
 Objeto para a tabela:
    name -> Nome do cliente
@@ -62,8 +69,8 @@ function Row(props) {
   
     return (
       <React.Fragment>
-        <TableRow sx={{'& > *': { borderBottom: 'unset' }, backgroundColor: '#242424'}}>
-          <TableCell>
+        <TableRow sx={{'& > *': { borderBottom: 'unset' }, backgroundColor: '#242424', borderWidth: 0}}>
+          <TableCell sx={{borderWidth: 0}}>
             <IconButton
                 aria-label="expand row"
                 size="small"
@@ -73,71 +80,69 @@ function Row(props) {
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           </TableCell>
-          <TableCell component="th" scope="row">{row.name}</TableCell>
-          <TableCell align="right">{row.document}</TableCell>
-          <TableCell align="right">{row.amount}</TableCell>
-          <TableCell align="right">{row.propostNumber}</TableCell>
+          <TableCell component="th" scope="row" sx={{color: whiteColor, borderWidth: 0}}>{row.name}</TableCell>
+          <TableCell align="right" sx={{color: whiteColor, borderWidth: 0}}>{maskCpf(`${row.document}`)}</TableCell>
+          <TableCell align="right" sx={{color: whiteColor, borderWidth: 0}}>{maskMoney(row.amount)}</TableCell>
+          <TableCell align="right" sx={{color: whiteColor, borderWidth: 0}}>{row.propostNumber}</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#2a2929' }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 1 }} >
-                <Typography variant="h6" gutterBottom component="div">
+                <Typography variant="h6" gutterBottom component="div" sx={{color: greenColor}}>
                   Informações Pessoais
                 </Typography>
                 <Table size="small" aria-label="purchases">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Nome</TableCell>
-                      <TableCell>CPF</TableCell>
-                      <TableCell>Telefone</TableCell>
-                      
-                      <TableCell>Cidade/UF</TableCell>
-                      <TableCell>Bairro</TableCell>
-                      <TableCell>CEP</TableCell>
+                      <TableCell sx={{color: greenColor, borderWidth: 0}}>Nome</TableCell>
+                      <TableCell sx={{color: greenColor, borderWidth: 0}}>CPF</TableCell>
+                      <TableCell sx={{color: greenColor, borderWidth: 0}}>Telefone</TableCell>
+                      <TableCell sx={{color: greenColor, borderWidth: 0}}>Cidade/UF</TableCell>
+                      <TableCell sx={{color: greenColor, borderWidth: 0}}>Bairro</TableCell>
+                      <TableCell sx={{color: greenColor, borderWidth: 0}}>CEP</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                       <TableRow>
-                        <TableCell scope="row">{row.clientInformation.name}</TableCell>
-                        <TableCell scope="row">{row.clientInformation.document}</TableCell>
-                        <TableCell scope="row">{row.clientInformation.telephone}</TableCell>
-                        <TableCell scope="row">{row.clientInformation.locality}</TableCell>
-                        <TableCell scope="row">{row.clientInformation.neighborhood}</TableCell>
-                        <TableCell scope="row">{row.clientInformation.cep}</TableCell>
+                        <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{row.clientInformation.name}</TableCell>
+                        <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{maskCpf(`${row.clientInformation.document}`)}</TableCell>
+                        <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{row.clientInformation.telephone}</TableCell>
+                        <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{row.clientInformation.locality}</TableCell>
+                        <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{row.clientInformation.neighborhood}</TableCell>
+                        <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{row.clientInformation.cep}</TableCell>
                       </TableRow>
                   </TableBody>
                 </Table>
               </Box>
               <Box sx={{ margin: 1 }}>
-                <Typography variant="h6" gutterBottom component="div">
+                <Typography variant="h6" gutterBottom component="div" sx={{color: greenColor}}>
                   Cotações
                 </Typography>
                 <Table size="small" aria-label="purchases">
                   <TableHead>
                     <TableRow>
-                        <TableCell>Contrato</TableCell>
-                        <TableCell>Produto</TableCell>
-                        <TableCell>Grupo</TableCell>
-                        <TableCell>Valor parcela</TableCell>
-                        <TableCell>Valor crédito</TableCell>
-                        <TableCell>Forma.pgto</TableCell>
-                        <TableCell>Data venc</TableCell>
-                        <TableCell>Situação</TableCell>
+                        <TableCell sx={{color: greenColor, borderWidth: 0}}>Contrato</TableCell>
+                        <TableCell sx={{color: greenColor, borderWidth: 0}}>Produto</TableCell>
+                        <TableCell sx={{color: greenColor, borderWidth: 0}}>Grupo</TableCell>
+                        <TableCell sx={{color: greenColor, borderWidth: 0}}>Valor parcela</TableCell>
+                        <TableCell sx={{color: greenColor, borderWidth: 0}}>Valor crédito</TableCell>
+                        <TableCell sx={{color: greenColor, borderWidth: 0}}>Forma.pgto</TableCell>
+                        <TableCell sx={{color: greenColor, borderWidth: 0}}>Data venc</TableCell>
+                        <TableCell sx={{color: greenColor, borderWidth: 0}}>Situação</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {row.salesInformation.map((historyRow) => (
                         <TableRow key={historyRow.contract}>
-                            <TableCell scope="row">{historyRow.contract}</TableCell>
-                            <TableCell scope="row">{historyRow.product}</TableCell>
-                            <TableCell scope="row">{historyRow.group}</TableCell>
-                            <TableCell scope="row">{historyRow.parcelValue}</TableCell>
-                            
-                            <TableCell scope="row">{historyRow.creditValue}</TableCell>
-                            <TableCell scope="row">{historyRow.payment}</TableCell>
-                            <TableCell scope="row">{historyRow.dueDate}</TableCell>
-                            <TableCell scope="row">{historyRow.situation}</TableCell>
+                            <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{historyRow.contract}</TableCell>
+                            <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{historyRow.product}</TableCell>
+                            <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{historyRow.group}</TableCell>
+                            <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{maskMoney(historyRow.parcelValue)}</TableCell>
+                            <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{maskMoney(historyRow.creditValue)}</TableCell>
+                            <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{historyRow.payment}</TableCell>
+                            <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{historyRow.dueDate}</TableCell>
+                            <TableCell scope="row" sx={{color: whiteColor, borderWidth: 0}}>{historyRow.situation}</TableCell>
                         </TableRow>
                     ))}
                   </TableBody>
@@ -149,12 +154,9 @@ function Row(props) {
       </React.Fragment>
     );
 }
-  
-  
+
 // Mock:
-const amount = 555555;
-const propostNumber = 5555555;
-const client = {
+const client1 = {
     name: "Luis Felipe Bueno",
     document: 52931247782,
     telephone: '(19) 91278-8965',
@@ -162,24 +164,51 @@ const client = {
     neighborhood: 'Eldourado',
     cep: '13343-801'
 };
+
+const client2 = {
+  name: "Wellington Bezerra",
+  document: 41831245674,
+  telephone: '(19) 94125-9080',
+  locality: 'Indaiatuba - SP',
+  neighborhood: 'Eldourado',
+  cep: '13343-801'
+};
+
+const client3 = {
+  name: "Marcio Scotuzzi Junior",
+  document: 45971256623,
+  telephone: '(19) 97489-1236',
+  locality: 'Indaiatuba - SP',
+  neighborhood: 'Eldourado',
+  cep: '13343-801'
+};
 const sales = [
-    {
-        contract: 5555555,
+      {
+        contract: 142225,
         product: "Imóvel",
         group: 455,
-        creditValue: amount,
-        parcelValue: amount/10,
+        creditValue: 100000,
+        parcelValue: 100000/10,
         payment: "BOLETO",
         dueDate: "20/04/2023",
         situation: "CONCLUÍDA"
-    },    
+    },
+    {
+      contract: 455221,
+      product: "Carro",
+      group: 236,
+      creditValue: 60000,
+      parcelValue: 60000/10,
+      payment: "BOLETO",
+      dueDate: "15/03/2023",
+      situation: "CONCLUÍDA"
+  },
 ]
 
-
 const rows = [
-  createData(amount, propostNumber, client, sales),
-  createData(amount, propostNumber, client, sales),
-  createData(amount, propostNumber, client, sales),
+  createData(142225, 554655, client1, sales),
+  createData(142225, 554655, client2, sales),
+  createData(142225, 554655, client3, sales),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -191,6 +220,7 @@ function descendingComparator(a, b, orderBy) {
   }
   return 0;
 }
+
 
 function getComparator(order, orderBy) {
   return order === 'desc'
@@ -258,33 +288,33 @@ function EnhancedTableHead(props) {
   return (
     <ThemeProvider theme={DarkTheme}>
         <TableHead sx={{backgroundColor: darkColorSecundary}}>
-        <TableRow>
-            {headCells.map((headCell) => (
-            <TableCell
-                key={headCell.id}
-                align={headCell.numeric ? 'right' : 'left'}
-                padding='15px'
-                sortDirection={orderBy === headCell.id ? order : false}  
-            >
-                <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}
-                    sx={{color: greenColor}}
-                    color='primary'
-                >
-                {headCell.label}
-                {
-                    orderBy === headCell.id ? (
-                    <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                    </Box>
-                    ) : null
-                }
-                </TableSortLabel>
-            </TableCell>
-            ))}
-        </TableRow>
+          <TableRow>
+              {headCells.map((headCell) => (
+              <TableCell
+                  key={headCell.id}
+                  align={headCell.numeric ? 'right' : 'left'}
+                  padding='15px'
+                  sortDirection={orderBy === headCell.id ? order : false}  
+              >
+                  <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : 'asc'}
+                      onClick={createSortHandler(headCell.id)}
+                      sx={{ color: greenColor }}
+                      color='primary'
+                  >
+                  {headCell.label}
+                  {
+                      orderBy === headCell.id ? (
+                      <Box component="span" sx={visuallyHidden}>
+                          {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                      </Box>
+                      ) : null
+                  }
+                  </TableSortLabel>
+              </TableCell>
+              ))}
+          </TableRow>
         </TableHead>
     </ThemeProvider>
   );
