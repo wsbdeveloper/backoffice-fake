@@ -20,8 +20,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {DarkTheme} from '../../themes/mui';
 import { maskCpf } from '../../config/regex';
-import { TextField } from '@material-ui/core';
-
+import Button from '@mui/material/Button';
 
 function maskMoney(value){
   return (Intl.NumberFormat('pt-br', {style: 'currency', currency: 'BRL'}).format(value)).replace("R$","")
@@ -363,7 +362,7 @@ export default function EnhancedTable() {
   const [dense, setDense] = React.useState(true);
   const [rowsCopy, setRowsCopy] = React.useState(rows)
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+  const [searchByName, setSearchByName] = React.useState('');
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -382,31 +381,71 @@ export default function EnhancedTable() {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowsCopy.length) : 0;
 
-  const visibleRows = React.useMemo(
-    () =>
-      stableSort(rowsCopy, getComparator(order, orderBy)).slice(
+  const visibleRows = React.useMemo(() =>stableSort(rowsCopy, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
     [order, orderBy, page, rowsPerPage],
   );
 
-  const search = (e)=>{
-    let strFilter = (e.target.value).toLowerCase()
+  const search = (item)=>{
+    let strFilter = item.toLowerCase()
     const res = rows.filter((row)=>{
       return row.name.toLowerCase().includes(strFilter)
     })
     setRowsCopy(res)
   }
+
   React.useEffect(()=>{
-    console.log('alteramos')
-  },[rowsCopy])
+    search(searchByName)
+  },[searchByName])
 
   return (
     <Box>
       <ThemeProvider theme={DarkTheme}>
-        <Box sx={{width: '100%', height: 200, marginBottom: 5, backgroundColor: '#2a2929'}}>
-          <TextField id="outlined-basic" label="Outlined" variant="outlined" onChange={search}/>
+        <h2 style={{color: greenColor, fontSize: 20}}>Pesquise por:</h2>
+        <Box sx={{width: '100%', height: 240, marginBottom: 5, backgroundColor: '#2a2929'}}>
+
+          <Box sx={{width: '100%', height: 80, display: 'flex', flexDirection: 'row'}}>
+            
+            <Box sx={{width: '30%', height: '100%', padding:2}}>
+              <h3>Nome:</h3>
+              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+            </Box>
+            
+            <Box sx={{width: '30%', height: '100%', padding:2}}>
+              <h3>CPF:</h3>
+              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+            </Box>
+
+            <Box sx={{width: '30%', height: '100%', padding:2}}>
+              <h3>Número contrato:</h3>
+              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+            </Box>
+          </Box>
+
+          <Box sx={{width: '100%', height: 80, display: 'flex', flexDirection: 'row'}}>
+            <Box sx={{width: '30%', height: '100%', padding:2}}>
+              <h3>Valor mínimo:</h3>
+              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+            </Box>
+            <Box sx={{width: '30%', height: '100%', padding:2}}>
+              <h3>Valor máximo:</h3>
+              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+            </Box>
+            <Box sx={{width: '30%', height: '100%', padding:2}}>
+              <h3>Grupo:</h3>
+              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+            </Box>
+          </Box>
+
+          <Box sx={{width: '100%', height: 50, paddingLeft: 2, display: 'flex', flexDirection: 'row'}}>
+            <Box sx={{width: '30%', height: '100%', display: 'flex', gap: 1, alignItems: 'flex-end'}}>
+              <Button variant="contained" sx={{height: 30,color: whiteColor}}>Pesquisar</Button>
+              <Button variant="contained" sx={{height: 30,color: whiteColor}}>Limpar</Button>
+            </Box>
+          </Box>
+
         </Box>
         <Box sx={{ width: '100%' }} border={0}>
         <Paper sx={{ width: '100%', mb: 2 }}>
@@ -426,7 +465,7 @@ export default function EnhancedTable() {
                 rowCount={rowsCopy.length}
                 />
                 <TableBody>
-                {visibleRows.map((row) => {
+                {rowsCopy.map((row) => {
                     return (
                         <Row row={row} key={row.name} />
                     );
