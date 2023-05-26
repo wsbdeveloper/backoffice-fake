@@ -166,7 +166,7 @@ const client1 = {
 
 const client2 = {
   name: "Wellington Bezerra",
-  document: 41831245674,
+  document: 52931247798,
   telephone: '(19) 94125-9080',
   locality: 'Indaiatuba - SP',
   neighborhood: 'Eldourado',
@@ -205,9 +205,9 @@ const sales = [
 ]
 
 let rows = [
-  createData(500144, 554655, client1, sales),
-  createData(144520, 554655, client2, sales),
-  createData(120000, 554655, client3, sales),
+  createData(500144, 5, client1, sales),
+  createData(144520, 3, client2, sales),
+  createData(120000, 2, client3, sales),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -363,6 +363,11 @@ export default function EnhancedTable() {
   const [rowsCopy, setRowsCopy] = React.useState(rows)
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchByName, setSearchByName] = React.useState('');
+  const [searchByDocument, setSearchByDocument] = React.useState('');
+  const [searchByPropost, setSearchByPropost] = React.useState('');
+  const [searchByMinValue, setSearchByMinValue] = React.useState('');
+  const [searchByMaxValue, setSearchByMaxValue] = React.useState('');
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -388,7 +393,17 @@ export default function EnhancedTable() {
     [order, orderBy, page, rowsPerPage],
   );
 
-  const search = (item)=>{
+  
+  // Limpando filtro:
+  const reset = ()=>{
+    setSearchByName('')
+    setSearchByDocument('')
+    setSearchByPropost('')
+  }
+
+  // Filtrando os valores e atualizando o objeto da tabela:
+  // Pesquisando nome do cliente:
+  const searchName = (item)=>{
     let strFilter = item.toLowerCase()
     const res = rows.filter((row)=>{
       return row.name.toLowerCase().includes(strFilter)
@@ -396,9 +411,53 @@ export default function EnhancedTable() {
     setRowsCopy(res)
   }
 
+  // Pesquisando CPF do cliente:
+  const searchDocument = (item)=>{
+    let strFilter = item
+    const res = rows.filter((row)=>{
+      const numberFormat = `${row.document}`
+      return numberFormat.includes(strFilter)
+    })
+    setRowsCopy(res)
+  }
+
+  // Pesquisando número genérico:
+  const searchPropost = (item)=>{
+    let strFilter = item
+    const res = rows.filter((row)=>{
+      const numberFormat = `${row.propostNumber}`
+      return numberFormat.includes(strFilter)
+    })
+    setRowsCopy(res)
+  }
+
+  const searchValue = (item)=>{
+    let strFilter = item
+    const min = searchByMinValue;
+    const max = searchByMaxValue;
+    console.log('minimo', min)
+    console.log('maximo', max)
+    // const res = rows.filter((row)=>{
+    //   const numberFormat = `${row.propostNumber}`
+    //   return numberFormat.includes(strFilter)
+    // })
+    // setRowsCopy(res)
+  }
+
+  
+  // UseState separados porque são filtros diferentes:
   React.useEffect(()=>{
-    search(searchByName)
+    searchName(searchByName)
+    searchValue(searchByName)
   },[searchByName])
+  
+  React.useEffect(()=>{
+    searchDocument(searchByDocument)
+  },[searchByDocument])
+
+  React.useEffect(()=>{
+    searchPropost(searchByPropost)
+  },[searchByPropost]) 
 
   return (
     <Box>
@@ -410,39 +469,35 @@ export default function EnhancedTable() {
             
             <Box sx={{width: '30%', height: '100%', padding:2}}>
               <h3>Nome:</h3>
-              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+              <input type="text" value={searchByName} style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
             </Box>
             
             <Box sx={{width: '30%', height: '100%', padding:2}}>
               <h3>CPF:</h3>
-              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+              <input type="text" value={searchByDocument} style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByDocument(e.target.value)}/>
             </Box>
 
             <Box sx={{width: '30%', height: '100%', padding:2}}>
-              <h3>Número contrato:</h3>
-              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+              <h3>Número da proposta:</h3>
+              <input type="text" value={searchByPropost} style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByPropost(e.target.value)}/>
             </Box>
           </Box>
 
           <Box sx={{width: '100%', height: 80, display: 'flex', flexDirection: 'row'}}>
             <Box sx={{width: '30%', height: '100%', padding:2}}>
               <h3>Valor mínimo:</h3>
-              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+              <input type="text" value={searchByMinValue} style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByMinValue(e.target.value)}/>
             </Box>
             <Box sx={{width: '30%', height: '100%', padding:2}}>
               <h3>Valor máximo:</h3>
-              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
-            </Box>
-            <Box sx={{width: '30%', height: '100%', padding:2}}>
-              <h3>Grupo:</h3>
-              <input type="text" style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByName(e.target.value)}/>
+              <input type="text" value={searchByMaxValue} style={{width: 300, height: 40, color: greenColor, outline: 0, backgroundColor: darkColor, borderRadius: 5}} onChange={(e)=>setSearchByMaxValue(e.target.value)}/>
             </Box>
           </Box>
 
           <Box sx={{width: '100%', height: 50, paddingLeft: 2, display: 'flex', flexDirection: 'row'}}>
             <Box sx={{width: '30%', height: '100%', display: 'flex', gap: 1, alignItems: 'flex-end'}}>
               <Button variant="contained" sx={{height: 30,color: whiteColor}}>Pesquisar</Button>
-              <Button variant="contained" sx={{height: 30,color: whiteColor}}>Limpar</Button>
+              <Button variant="contained" sx={{height: 30,color: whiteColor}} onClick={reset}>Limpar</Button>
             </Box>
           </Box>
 
