@@ -19,8 +19,8 @@ import { visuallyHidden } from '@mui/utils';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {DarkTheme} from '../../themes/mui';
-
 import { maskCpf } from '../../config/regex';
+import { TextField } from '@material-ui/core';
 
 
 function maskMoney(value){
@@ -205,10 +205,10 @@ const sales = [
   },
 ]
 
-const rows = [
-  createData(142225, 554655, client1, sales),
-  createData(142225, 554655, client2, sales),
-  createData(142225, 554655, client3, sales),
+let rows = [
+  createData(500144, 554655, client1, sales),
+  createData(144520, 554655, client2, sales),
+  createData(120000, 554655, client3, sales),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -265,10 +265,10 @@ const headCells = [
     label: 'Valor total',
   },
   {
-    id: 'contract',
+    id: 'numberPropost',
     numeric: true,
     disablePadding: false,
-    label: 'Contrato',
+    label: 'Número da proposta',
   },
 ];
 
@@ -294,6 +294,7 @@ function EnhancedTableHead(props) {
                   key={headCell.id}
                   align={headCell.numeric ? 'right' : 'left'}
                   padding='15px'
+                  sx={{color: greenColor}}
                   sortDirection={orderBy === headCell.id ? order : false}  
               >
                   <TableSortLabel
@@ -353,12 +354,14 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
+
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('document');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(true);
+  const [rowsCopy, setRowsCopy] = React.useState(rows)
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleRequestSort = (event, property) => {
@@ -377,19 +380,34 @@ export default function EnhancedTable() {
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowsCopy.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(rows, getComparator(order, orderBy)).slice(
+      stableSort(rowsCopy, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
     [order, orderBy, page, rowsPerPage],
   );
 
+  const search = (e)=>{
+    let strFilter = (e.target.value).toLowerCase()
+    const res = rows.filter((row)=>{
+      return row.name.toLowerCase().includes(strFilter)
+    })
+    setRowsCopy(res)
+  }
+  React.useEffect(()=>{
+    console.log('alteramos')
+  },[rowsCopy])
+
   return (
-    <ThemeProvider theme={DarkTheme}>
+    <Box>
+      <ThemeProvider theme={DarkTheme}>
+        <Box sx={{width: '100%', height: 200, marginBottom: 5, backgroundColor: '#2a2929'}}>
+          <TextField id="outlined-basic" label="Outlined" variant="outlined" onChange={search}/>
+        </Box>
         <Box sx={{ width: '100%' }} border={0}>
         <Paper sx={{ width: '100%', mb: 2 }}>
             <EnhancedTableToolbar numSelected={selected.length} />
@@ -405,10 +423,10 @@ export default function EnhancedTable() {
                 order={order}
                 orderBy={orderBy}
                 onRequestSort={handleRequestSort}
-                rowCount={rows.length}
+                rowCount={rowsCopy.length}
                 />
                 <TableBody>
-                {visibleRows.map((row, index) => {
+                {visibleRows.map((row) => {
                     return (
                         <Row row={row} key={row.name} />
                     );
@@ -426,17 +444,18 @@ export default function EnhancedTable() {
             </Table>
             </TableContainer>
             <TablePagination
-            rowsPerPageOptions={[2,5,10]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            sx={{backgroundColor: darkColorSecundary, color: whiteColor}}
-            />
-        </Paper>
-        </Box>
-    </ThemeProvider>
+              rowsPerPageOptions={[2,5,10]}
+              component="div"
+              count={rowsCopy.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{backgroundColor: darkColorSecundary, color: whiteColor}}
+              />
+          </Paper>
+          </Box>
+      </ThemeProvider>
+    </Box>
   );
 }
